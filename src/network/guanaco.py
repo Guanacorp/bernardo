@@ -3,9 +3,9 @@ import re
 import requests
 import time
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
-load_dotenv(dotenv_path=".env")
+load_dotenv(find_dotenv())
 
 GUANACO_HOST = os.environ.get("GUANACO_HOST").rstrip("/")
 GUANACO_TOKEN = os.environ.get("GUANACO_TOKEN")
