@@ -10,12 +10,34 @@ load_dotenv(dotenv_path=".env")
 GUANACO_HOST = os.environ.get("GUANACO_HOST").rstrip("/")
 GUANACO_TOKEN = os.environ.get("GUANACO_TOKEN")
 STRATEGY_TTL = 24 * 60 * 60
+MAX_RETRIES = 5
+BASE_DELAY = 10
 
 _strategy_cache = {
     "expires": 0,
     "accepted": [],
     "refused": []
 }
+
+def get_strategy_uncached():
+    retries = 0
+    delay = BASE_DELAY
+    while True:
+        try:
+            r = requests.get(
+                f"{GUANACO_HOST}/api/scraper/strategy",
+                timeout=3,
+            )
+            r.raise_for_status()
+            return r.json()
+        except (requests.RequestException, requests.Timeout) as e:
+            retries += 1
+            if retries > MAX_RETRIES:
+                raise
+            print(f"[bernardo.debug] Request failed ({e})")
+            print(f"[bernardo.debug] Retrying in {delay} seconds...")
+            time.sleep(delay)
+            delay *= 2
 
 def get_strategy():
     global _strategy_cache
@@ -24,13 +46,7 @@ def get_strategy():
     if now < _strategy_cache["expires"]:
         return _strategy_cache
 
-    r = requests.get(
-        f"{GUANACO_HOST}/api/scraper/strategy",
-        timeout=3,
-    )
-    r.raise_for_status()
-
-    data = r.json()
+    data = get_strategy_uncached()
 
     _strategy_cache = {
         "expires": time.time() + STRATEGY_TTL,

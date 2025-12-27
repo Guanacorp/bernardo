@@ -6,6 +6,7 @@ RUN pip install --no-cache-dir \
 
 WORKDIR /app
 COPY . /app
+COPY .env /app/src
 
 EXPOSE 8080
 EXPOSE 8081

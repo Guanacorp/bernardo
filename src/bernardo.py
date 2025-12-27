@@ -55,7 +55,6 @@ RULES = [
 ]
 
 def match_rule(flow):
-    #print(flow.request.pretty_url)
     for r in RULES:
         path = r["path"]
         host = r["host"]
@@ -67,15 +66,12 @@ def match_rule(flow):
             continue
         if flow.request.method != method:
             request_method = flow.request.method
-            #print(f"NOT MATCH {request_method} {method}")
             continue
         if not path.match(flow.request.path):
             request_path = flow.request.path
-            #print(f"NOT MATCH {request_path}")
             continue
         if content_type not in flow.response.headers.get("content-type", ""):
             response_content_type = flow.response.headers.get("content-type", "")
-            #print(f"NOT MATCH {content_type} {response_content_type}")
             continue
         return r
     return False
@@ -149,7 +145,7 @@ def response(flow: http.HTTPFlow):
     try:
         strategy = get_strategy()
     except Exception:
-        print("Could not connect to guanaco")
+        print("[bernardo.error] Could not connect to Guanaco.")
         return
 
     host = flow.request.host
