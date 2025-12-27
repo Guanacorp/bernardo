@@ -4,8 +4,6 @@ services:
       context: .
       dockerfile: .docker/bernardo/Dockerfile
     container_name: bernardo
-    networks:
-      - ${PROJECT}_public
     restart: unless-stopped
     ports:
       - "8080:8080" #proxy
