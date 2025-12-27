@@ -2,11 +2,11 @@ services:
   bernardo:
     build:
       context: .
-      dockerfile: .docker/bernardo/Dockerfile
-    container_name: bernardo
+      dockerfile: Dockerfile
+    container_name: guanaco_bernardo
     restart: unless-stopped
     ports:
-      - "8080:8080" #proxy
-      - "8081:8081" #ui
+      - "${BERNARDO_PROXY_PORT:-8080}:8080" #proxy
+      - "${BERNARDO_UI_PORT:-8081}:8081" #ui
     volumes:
-      - ./bernardo:/app
+      - ./:/app

@@ -146,7 +146,12 @@ def response(flow: http.HTTPFlow):
     if not flow.response:
         return
 
-    strategy = get_strategy()
+    try:
+        strategy = get_strategy()
+    except Exception:
+        print("Could not connect to guanaco")
+        return
+
     host = flow.request.host
 
     if any(pattern.search(host) for pattern in strategy["refused"]):
